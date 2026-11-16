@@ -40,49 +40,122 @@
         <span class="link-toggle" onclick="tampilkanForm('login')">Sudah punya akun? Login di sini</span>
     </div>
 
-    <!-- HALAMAN PEMUTAR MUROTAL -->
+   <!-- HALAMAN PEMUTAR MUROTAL -->
     <div id="player-box" class="card hidden">
         <h2>Murotal Al-Qur'an</h2>
-        <p id="welcome-text" style="color: #94a3b8;"></p>
-        
-   <div style="background: #0f172a; padding: 15px; border-radius: 8px; margin: 20px 0;">
-    <!-- Dropdown untuk memilih surah secara manual -->
-    <select id="pilih-surah" onchange="putarSurah(Number(this.value))" style="width: 100%; padding: 10px; margin-bottom: 12px; border-radius: 6px; background: #1e293b; color: white; border: 1px solid #334155;">
-    </select>
+        <p id="welcome-text" style="color: #94a3b8; font-size: 14px;"></p>
 
-    <!-- Judul surah yang sedang diputar -->
-    <p id="judul-surah" style="margin-top: 0;"><strong>001. Al-Fatihah</strong></p>
+        <div style="background: #0f172a; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <!-- Dropdown untuk memilih surah secara manual -->
+            <select id="pilih-surah" onchange="putarSurah(Number(this.value), true)" style="width: 100%; padding: 10px; margin-bottom: 12px; border-radius: 6px; background: #1e293b; color: white; border: 1px solid #334155;">
+            </select>
 
-    <!-- Pemutar Audio -->
-    <audio id="audio-player" controls style="width: 100%;">
-        <source id="audio-source" src="https://server8.mp3quran.net/afs/001.mp3" type="audio/mpeg">
-        Browser Anda tidak mendukung pemutar audio.
-    </audio>
+            <!-- Judul surah yang sedang diputar -->
+            <p id="judul-surah" style="margin-top: 0; color: #34d399;"><strong>001. Surah Al-Fatihah</strong></p>
 
-    <!-- Tombol Navigasi Manual -->
-    <div style="display: flex; gap: 10px; margin-top: 12px;">
-        <button type="button" onclick="surahSebelumnya()" style="background: #334155; margin-top: 0;">&#9664; Sebelumnya</button>
-        <button type="button" onclick="surahBerikutnya()" style="background: #334155; margin-top: 0;">Berikutnya &#9654;</button>
-    </div>
-</div>
+            <!-- Pemutar Audio (Langsung menggunakan src pada tag audio) -->
+            <audio id="audio-player" controls preload="none" src="https://server8.mp3quran.net/afs/001.mp3" style="width: 100%;">
+                Browser Anda tidak mendukung pemutar audio.
+            </audio>
 
-        <button onclick="prosesLogout()" style="background: #ef4444;">Logout</button>
+            <!-- Tombol Navigasi Manual -->
+            <div style="display: flex; gap: 10px; margin-top: 12px;">
+                <button type="button" onclick="surahSebelumnya()" style="background: #334155; margin-top: 0;">&#9664; Sebelumnya</button>
+                <button type="button" onclick="surahBerikutnya()" style="background: #334155; margin-top: 0;">Berikutnya &#9654;</button>
+            </div>
+        </div>
+
+        <button type="button" onclick="prosesLogout()" style="background: #ef4444;">Logout</button>
     </div>
 
     <script>
         // GANTI URL DI BAWAH INI DENGAN WEB APP URL GOOGLE APPS SCRIPT ANDA
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCVH_3NKDs1IK4jsdzTi4IR06CNtgIJwyExIne0du90dD4CmIaFNXCbjNFoV99NtKr4w/exec";
+        const SCRIPT_URL = "TEMPEL_URL_WEB_APP_ANDA_DI_SINI";
 
-        // Cek sesi saat halaman dibuka
-        window.onload = function() {
+        const daftarSurah = [
+            "Al-Fatihah", "Al-Baqarah", "Ali 'Imran", "An-Nisa'", "Al-Ma'idah", "Al-An'am", "Al-A'raf", "Al-Anfal", "At-Taubah", "Yunus",
+            "Hud", "Yusuf", "Ar-Ra'd", "Ibrahim", "Al-Hijr", "An-Nahl", "Al-Isra'", "Al-Kahf", "Maryam", "Taha",
+            "Al-Anbiya'", "Al-Hajj", "Al-Mu'minun", "An-Nur", "Al-Furqan", "Asy-Syu'ara'", "An-Naml", "Al-Qasas", "Al-'Ankabut", "Ar-Rum",
+            "Luqman", "As-Sajdah", "Al-Ahzab", "Saba'", "Fatir", "Yasin", "As-Saffat", "Sad", "Az-Zumar", "Ghafir",
+            "Fussilat", "Asy-Syura", "Az-Zukhruf", "Ad-Dukhan", "Al-Jasiyah", "Al-Ahqaf", "Muhammad", "Al-Fath", "Al-Hujurat", "Qaf",
+            "Az-Zariyat", "At-Tur", "An-Najm", "Al-Qamar", "Ar-Rahman", "Al-Waqi'ah", "Al-Hadid", "Al-Mujadilah", "Al-Hasyr", "Al-Mumtahanah",
+            "As-Saff", "Al-Jumu'ah", "Al-Munafiqun", "At-Tagabun", "At-Talaq", "At-Tahrim", "Al-Mulk", "Al-Qalam", "Al-Haqqah", "Al-Ma'arij",
+            "Nuh", "Al-Jinn", "Al-Muzzammil", "Al-Muddassir", "Al-Qiyamah", "Al-Insan", "Al-Mursalat", "An-Naba'", "An-Nazi'at", "'Abasa",
+            "At-Takwir", "Al-Infitar", "Al-Mutaffifin", "Al-Insyiqaq", "Al-Buruj", "At-Tariq", "Al-A'la", "Al-Gasyiyah", "Al-Fajr", "Al-Balad",
+            "Asy-Syams", "Al-Lail", "Ad-Duha", "Asy-Syarh", "At-Tin", "Al-'Alaq", "Al-Qadr", "Al-Bayyinah", "Az-Zalzalah", "Al-'Adiyat",
+            "Al-Qari'ah", "At-Takasur", "Al-'Asr", "Al-Humazah", "Al-Fil", "Quraisy", "Al-Ma'un", "Al-Kausar", "Al-Kafirun", "An-Nasr",
+            "Al-Lahab", "Al-Ikhlas", "Al-Falaq", "An-Nas"
+        ];
+
+        let surahAktif = 1;
+        const audioPlayer = document.getElementById("audio-player");
+        const judulSurah = document.getElementById("judul-surah");
+        const selectSurah = document.getElementById("pilih-surah");
+
+        // 1. Isi dropdown 114 surah saat halaman dimuat
+        function inisialisasiDropdown() {
+            selectSurah.innerHTML = "";
+            daftarSurah.forEach((nama, index) => {
+                const nomor = index + 1;
+                const format3Digit = String(nomor).padStart(3, "0");
+                const option = document.createElement("option");
+                option.value = nomor;
+                option.text = `${format3Digit}. ${nama}`;
+                selectSurah.appendChild(option);
+            });
+        }
+
+        // 2. Fungsi memutar surah & menyimpan progres terakhir
+        function putarSurah(nomor, autoPlay = true) {
+            if (nomor < 1) nomor = 114;
+            if (nomor > 114) nomor = 1;
+
+            surahAktif = nomor;
+            localStorage.setItem("murotal_last_surah", nomor);
+
+            const format3Digit = String(nomor).padStart(3, "0");
+            const nama = daftarSurah[nomor - 1];
+
+            judulSurah.innerHTML = `<strong>${format3Digit}. Surah ${nama}</strong>`;
+            selectSurah.value = nomor;
+            audioPlayer.src = `https://server8.mp3quran.net/afs/${format3Digit}.mp3`;
+            audioPlayer.load();
+
+            if (autoPlay) {
+                audioPlayer.play().catch(err => {
+                    console.log("Menunggu interaksi pengguna untuk memutar audio:", err);
+                });
+            }
+        }
+
+        function surahBerikutnya() {
+            putarSurah(surahAktif + 1, true);
+        }
+
+        function surahSebelumnya() {
+            putarSurah(surahAktif - 1, true);
+        }
+
+        // 3. Otomatis lanjut ke surah berikutnya saat surah selesai diputar
+        audioPlayer.addEventListener("ended", function() {
+            surahBerikutnya();
+        });
+
+        // 4. Cek sesi login & surah terakhir saat halaman dibuka
+        window.addEventListener("DOMContentLoaded", function() {
+            inisialisasiDropdown();
+
+            const lastSurah = Number(localStorage.getItem("murotal_last_surah")) || 1;
+            putarSurah(lastSurah, false); // Muat surah terakhir tanpa auto-play paksa
+
             const savedUser = localStorage.getItem("murotal_session");
             if (savedUser) {
                 const userObj = JSON.parse(savedUser);
                 tampilkanPlayer(userObj);
             }
-        };
+        });
 
-        // Berpindah antara form Login dan Register
+        // 5. Navigasi Form Login & Register
         function tampilkanForm(tipe) {
             document.getElementById("login-msg").innerText = "";
             document.getElementById("reg-msg").innerText = "";
@@ -95,7 +168,7 @@
             }
         }
 
-        // Mengirim data Login atau Registrasi ke Google Apps Script
+        // 6. Kirim data Login / Register ke Google Apps Script
         async function kirimAuth(action) {
             let payload = { action: action };
             let btn, msgBox;
@@ -113,7 +186,6 @@
                 msgBox = document.getElementById("reg-msg");
             }
 
-            // Kunci tombol saat sedang memproses
             btn.disabled = true;
             btn.innerText = "Memproses...";
             msgBox.className = "status-msg";
@@ -122,9 +194,7 @@
             try {
                 const response = await fetch(SCRIPT_URL, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "text/plain;charset=utf-8"
-                    },
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
                     body: JSON.stringify(payload)
                 });
 
@@ -135,13 +205,11 @@
                     msgBox.innerText = result.message;
 
                     if (action === "register") {
-                        // Otomatis pindah ke form login setelah 1.5 detik
                         setTimeout(() => {
                             tampilkanForm("login");
                             document.getElementById("login-kontak").value = payload.kontak;
                         }, 1500);
                     } else if (action === "login") {
-                        // Simpan sesi dan buka pemutar murotal
                         localStorage.setItem("murotal_session", JSON.stringify(result.user));
                         tampilkanPlayer(result.user);
                     }
@@ -167,10 +235,10 @@
         }
 
         function prosesLogout() {
+            audioPlayer.pause();
             localStorage.removeItem("murotal_session");
             location.reload();
         }
     </script>
-
 </body>
 </html>
