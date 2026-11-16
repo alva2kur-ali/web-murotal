@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Murotal Al-Qur'an Digital</title>
+    <style>
+        body { font-family: sans-serif; background: #0f172a; color: #f8fafc; text-align: center; padding: 20px; }
+        .card { background: #1e293b; padding: 20px; border-radius: 12px; max-width: 400px; margin: 20px auto; }
+        input, button { width: 90%; padding: 10px; margin: 8px 0; border-radius: 6px; border: none; }
+        button { background: #10b981; color: white; font-weight: bold; cursor: pointer; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- Halaman Login -->
+    <div id="login-box" class="card">
+        <h2>Login Murotal</h2>
+        <input type="text" id="user-id" placeholder="Email atau No. WA" required>
+        <input type="password" id="user-pass" placeholder="Password" required>
+        <button onclick="prosesLogin()">Masuk</button>
+    </div>
+
+    <!-- Halaman Pemutar Murotal (Muncul setelah login) -->
+    <div id="player-box" class="card hidden">
+        <h2>Daftar Murotal</h2>
+        <p id="welcome-text"></p>
+        <div style="margin: 20px 0;">
+            <p><strong>001. Al-Fatihah</strong></p>
+            <!-- Contoh sumber audio eksternal -->
+            <audio controls style="width: 100%;">
+                <source src="https://server8.mp3quran.net/afs/001.mp3" type="audio/mpeg">
+                Browser Anda tidak mendukung pemutar audio.
+            </audio>
+        </div>
+        <button onclick="prosesLogout()" style="background: #ef4444;">Logout</button>
+    </div>
+
+    <script>
+        // Cek apakah user sudah pernah login sebelumnya
+        window.onload = function() {
+            const savedUser = localStorage.getItem("murotal_user");
+            if (savedUser) {
+                tampilkanPlayer(savedUser);
+            }
+        };
+
+        function prosesLogin() {
+            const user = document.getElementById("user-id").value;
+            const pass = document.getElementById("user-pass").value;
+
+            if (!user || !pass) {
+                alert("Silakan isi Email/No. WA dan Password!");
+                return;
+            }
+
+            // Simpan sesi ke browser (Nantinya bagian ini disambungkan ke Google Apps Script)
+            localStorage.setItem("murotal_user", user);
+            tampilkanPlayer(user);
+        }
+
+        function tampilkanPlayer(user) {
+            document.getElementById("login-box").classList.add("hidden");
+            document.getElementById("player-box").classList.remove("hidden");
+            document.getElementById("welcome-text").innerText = "Ahlan wa Sahlan, " + user;
+        }
+
+        function prosesLogout() {
+            localStorage.removeItem("murotal_user");
+            location.reload();
+        }
+    </script>
+
+</body>
+</html>
