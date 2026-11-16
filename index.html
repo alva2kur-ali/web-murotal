@@ -5,69 +5,156 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Murotal Al-Qur'an Digital</title>
     <style>
-        body { font-family: sans-serif; background: #0f172a; color: #f8fafc; text-align: center; padding: 20px; }
-        .card { background: #1e293b; padding: 20px; border-radius: 12px; max-width: 400px; margin: 20px auto; }
-        input, button { width: 90%; padding: 10px; margin: 8px 0; border-radius: 6px; border: none; }
-        button { background: #10b981; color: white; font-weight: bold; cursor: pointer; }
+        body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; text-align: center; padding: 20px; margin: 0; }
+        .card { background: #1e293b; padding: 25px; border-radius: 12px; max-width: 420px; margin: 30px auto; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+        input { width: 100%; box-sizing: border-box; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; }
+        button { width: 100%; padding: 12px; margin-top: 12px; border-radius: 8px; border: none; background: #10b981; color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
+        button:disabled { background: #475569; cursor: not-allowed; }
+        .link-toggle { color: #38bdf8; cursor: pointer; font-size: 14px; display: inline-block; margin-top: 15px; text-decoration: underline; }
         .hidden { display: none; }
+        .status-msg { font-size: 14px; margin-top: 10px; min-height: 20px; }
+        .error { color: #f87171; }
+        .success { color: #34d399; }
     </style>
 </head>
 <body>
 
-    <!-- Halaman Login -->
+    <!-- FORM LOGIN -->
     <div id="login-box" class="card">
         <h2>Login Murotal</h2>
-        <input type="text" id="user-id" placeholder="Email atau No. WA" required>
-        <input type="password" id="user-pass" placeholder="Password" required>
-        <button onclick="prosesLogin()">Masuk</button>
+        <input type="text" id="login-kontak" placeholder="Email atau No. WA" required>
+        <input type="password" id="login-pass" placeholder="Password" required>
+        <button id="btn-login" onclick="kirimAuth('login')">Masuk</button>
+        <div id="login-msg" class="status-msg"></div>
+        <span class="link-toggle" onclick="tampilkanForm('register')">Belum punya akun? Daftar di sini</span>
     </div>
 
-    <!-- Halaman Pemutar Murotal (Muncul setelah login) -->
+    <!-- FORM REGISTRASI -->
+    <div id="register-box" class="card hidden">
+        <h2>Daftar Akun Baru</h2>
+        <input type="text" id="reg-nama" placeholder="Nama Lengkap / Panggilan" required>
+        <input type="text" id="reg-kontak" placeholder="Email atau No. WA" required>
+        <input type="password" id="reg-pass" placeholder="Buat Password" required>
+        <button id="btn-register" onclick="kirimAuth('register')">Daftar Sekarang</button>
+        <div id="reg-msg" class="status-msg"></div>
+        <span class="link-toggle" onclick="tampilkanForm('login')">Sudah punya akun? Login di sini</span>
+    </div>
+
+    <!-- HALAMAN PEMUTAR MUROTAL -->
     <div id="player-box" class="card hidden">
-        <h2>Daftar Murotal</h2>
-        <p id="welcome-text"></p>
-        <div style="margin: 20px 0;">
-            <p><strong>001. Al-Fatihah</strong></p>
-            <!-- Contoh sumber audio eksternal -->
+        <h2>Murotal Al-Qur'an</h2>
+        <p id="welcome-text" style="color: #94a3b8;"></p>
+        
+        <div style="background: #0f172a; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <p style="margin-top: 0;"><strong>001. Surah Al-Fatihah</strong></p>
             <audio controls style="width: 100%;">
                 <source src="https://server8.mp3quran.net/afs/001.mp3" type="audio/mpeg">
                 Browser Anda tidak mendukung pemutar audio.
             </audio>
         </div>
+
         <button onclick="prosesLogout()" style="background: #ef4444;">Logout</button>
     </div>
 
     <script>
-        // Cek apakah user sudah pernah login sebelumnya
+        // GANTI URL DI BAWAH INI DENGAN WEB APP URL GOOGLE APPS SCRIPT ANDA
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCVH_3NKDs1IK4jsdzTi4IR06CNtgIJwyExIne0du90dD4CmIaFNXCbjNFoV99NtKr4w/exec";
+
+        // Cek sesi saat halaman dibuka
         window.onload = function() {
-            const savedUser = localStorage.getItem("murotal_user");
+            const savedUser = localStorage.getItem("murotal_session");
             if (savedUser) {
-                tampilkanPlayer(savedUser);
+                const userObj = JSON.parse(savedUser);
+                tampilkanPlayer(userObj);
             }
         };
 
-        function prosesLogin() {
-            const user = document.getElementById("user-id").value;
-            const pass = document.getElementById("user-pass").value;
+        // Berpindah antara form Login dan Register
+        function tampilkanForm(tipe) {
+            document.getElementById("login-msg").innerText = "";
+            document.getElementById("reg-msg").innerText = "";
+            if (tipe === "register") {
+                document.getElementById("login-box").classList.add("hidden");
+                document.getElementById("register-box").classList.remove("hidden");
+            } else {
+                document.getElementById("register-box").classList.add("hidden");
+                document.getElementById("login-box").classList.remove("hidden");
+            }
+        }
 
-            if (!user || !pass) {
-                alert("Silakan isi Email/No. WA dan Password!");
-                return;
+        // Mengirim data Login atau Registrasi ke Google Apps Script
+        async function kirimAuth(action) {
+            let payload = { action: action };
+            let btn, msgBox;
+
+            if (action === "login") {
+                payload.kontak = document.getElementById("login-kontak").value;
+                payload.password = document.getElementById("login-pass").value;
+                btn = document.getElementById("btn-login");
+                msgBox = document.getElementById("login-msg");
+            } else {
+                payload.nama = document.getElementById("reg-nama").value;
+                payload.kontak = document.getElementById("reg-kontak").value;
+                payload.password = document.getElementById("reg-pass").value;
+                btn = document.getElementById("btn-register");
+                msgBox = document.getElementById("reg-msg");
             }
 
-            // Simpan sesi ke browser (Nantinya bagian ini disambungkan ke Google Apps Script)
-            localStorage.setItem("murotal_user", user);
-            tampilkanPlayer(user);
+            // Kunci tombol saat sedang memproses
+            btn.disabled = true;
+            btn.innerText = "Memproses...";
+            msgBox.className = "status-msg";
+            msgBox.innerText = "Menghubungkan ke server...";
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "text/plain;charset=utf-8"
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    msgBox.classList.add("success");
+                    msgBox.innerText = result.message;
+
+                    if (action === "register") {
+                        // Otomatis pindah ke form login setelah 1.5 detik
+                        setTimeout(() => {
+                            tampilkanForm("login");
+                            document.getElementById("login-kontak").value = payload.kontak;
+                        }, 1500);
+                    } else if (action === "login") {
+                        // Simpan sesi dan buka pemutar murotal
+                        localStorage.setItem("murotal_session", JSON.stringify(result.user));
+                        tampilkanPlayer(result.user);
+                    }
+                } else {
+                    msgBox.classList.add("error");
+                    msgBox.innerText = result.message;
+                }
+            } catch (error) {
+                msgBox.classList.add("error");
+                msgBox.innerText = "Gagal terhubung ke server. Periksa koneksi internet Anda.";
+                console.error(error);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = action === "login" ? "Masuk" : "Daftar Sekarang";
+            }
         }
 
         function tampilkanPlayer(user) {
             document.getElementById("login-box").classList.add("hidden");
+            document.getElementById("register-box").classList.add("hidden");
             document.getElementById("player-box").classList.remove("hidden");
-            document.getElementById("welcome-text").innerText = "Ahlan wa Sahlan, " + user;
+            document.getElementById("welcome-text").innerText = "Ahlan wa Sahlan, " + user.nama + " (" + user.kontak + ")";
         }
 
         function prosesLogout() {
-            localStorage.removeItem("murotal_user");
+            localStorage.removeItem("murotal_session");
             location.reload();
         }
     </script>
