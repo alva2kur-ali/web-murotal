@@ -45,13 +45,26 @@
         <h2>Murotal Al-Qur'an</h2>
         <p id="welcome-text" style="color: #94a3b8;"></p>
         
-        <div style="background: #0f172a; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <p style="margin-top: 0;"><strong>001. Surah Al-Fatihah</strong></p>
-            <audio controls style="width: 100%;">
-                <source src="https://server8.mp3quran.net/afs/" type="audio/mpeg">
-                Browser Anda tidak mendukung pemutar audio.
-            </audio>
-        </div>
+       <div style="background: #0f172a; padding: 15px; border-radius: 8px; margin: 20px 0;">
+    <!-- Dropdown untuk memilih surah secara manual -->
+    <select id="pilih-surah" onchange="putarSurah(Number(this.value))" style="width: 100%; padding: 10px; margin-bottom: 12px; border-radius: 6px; background: #1e293b; color: white; border: 1px solid #334155;">
+    </select>
+
+    <!-- Judul surah yang sedang diputar -->
+    <p id="judul-surah" style="margin-top: 0;"><strong>001. Al-Fatihah</strong></p>
+
+    <!-- Pemutar Audio -->
+    <audio id="audio-player" controls style="width: 100%;">
+        <source id="audio-source" src="https://server8.mp3quran.net/afs/001.mp3" type="audio/mpeg">
+        Browser Anda tidak mendukung pemutar audio.
+    </audio>
+
+    <!-- Tombol Navigasi Manual -->
+    <div style="display: flex; gap: 10px; margin-top: 12px;">
+        <button type="button" onclick="surahSebelumnya()" style="background: #334155; margin-top: 0;">&#9664; Sebelumnya</button>
+        <button type="button" onclick="surahBerikutnya()" style="background: #334155; margin-top: 0;">Berikutnya &#9654;</button>
+    </div>
+
 
         <button onclick="prosesLogout()" style="background: #ef4444;">Logout</button>
     </div>
