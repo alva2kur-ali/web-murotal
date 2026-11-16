@@ -3,18 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <br>
+    <title>Selamat Datang di Website Moch. Ali Maskur, S.Pd.I.</title>
+    <br>
     <title>Murotal Al-Qur'an Digital</title>
-    <style>
-        body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; text-align: center; padding: 20px; margin: 0; }
-        .card { background: #1e293b; padding: 25px; border-radius: 12px; max-width: 420px; margin: 30px auto; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
-        input { width: 100%; box-sizing: border-box; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; }
-        button { width: 100%; padding: 12px; margin-top: 12px; border-radius: 8px; border: none; background: #10b981; color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
-        button:disabled { background: #475569; cursor: not-allowed; }
-        .link-toggle { color: #38bdf8; cursor: pointer; font-size: 14px; display: inline-block; margin-top: 15px; text-decoration: underline; }
-        .hidden { display: none; }
-        .status-msg { font-size: 14px; margin-top: 10px; min-height: 20px; }
-        .error { color: #f87171; }
-        .success { color: #34d399; }
+   <style>
+        body {
+            font-family: system-ui, sans-serif;
+            color: #f8fafc;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            /* Background Masjid Nabawi Full Screen + Lapisan Gelap agar Kontras */
+            background-color: #0f172a;
+            background-image: 
+                linear-gradient(rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.85)),
+                url('https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+
+        .card {
+            /* Efek Glassmorphism (Transparan Buram) agar Masjid Nabawi tetap terlihat */
+            background: rgba(30, 41, 59, 0.78);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 25px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 420px;
+            margin: 20px auto;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            box-sizing: border-box;
+        }
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            background: rgba(15, 23, 42, 0.85);
+            color: white;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #10b981;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 8px;
+            border: none;
+            background: #10b981;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        button:hover:not(:disabled) {
+            background: #059669;
+        }
+
+        button:disabled {
+            background: #475569;
+            cursor: not-allowed;
+        }
+
+        .link-toggle {
+            color: #38bdf8;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-block;
+            margin-top: 15px;
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .status-msg {
+            font-size: 14px;
+            margin-top: 10px;
+            min-height: 20px;
+        }
+
+        .error {
+            color: #f87171;
+        }
+
+        .success {
+            color: #34d399;
+        }
     </style>
 </head>
 <body>
