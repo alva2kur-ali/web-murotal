@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Murotal Al-Qur'an Digital</title>
-   <style>
+    <style>
         body {
             font-family: system-ui, sans-serif;
             color: #f8fafc;
@@ -43,7 +43,7 @@
             box-sizing: border-box;
         }
 
-        input {
+        input, select {
             width: 100%;
             box-sizing: border-box;
             padding: 12px;
@@ -55,8 +55,42 @@
             outline: none;
         }
 
-        input:focus {
+        input:focus, select:focus {
             border-color: #10b981;
+        }
+
+        /* Wadah input password agar ikon mata rapi di dalam kotak */
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+            margin: 8px 0;
+        }
+
+        .password-wrapper input {
+            margin: 0;
+            padding-right: 44px; /* Ruang untuk ikon mata */
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 4px;
+            margin: 0;
+            width: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toggle-password:hover {
+            color: #f8fafc;
+            background: transparent;
         }
 
         button {
@@ -108,6 +142,15 @@
         .success {
             color: #34d399;
         }
+
+        .select-label {
+            display: block;
+            text-align: left;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 4px;
+            margin-top: 8px;
+        }
     </style>
 </head>
 <body>
@@ -116,7 +159,17 @@
     <div id="login-box" class="card">
         <h2>Login Murotal</h2>
         <input type="text" id="login-kontak" placeholder="Email atau No. WA" required>
-        <input type="password" id="login-pass" placeholder="Password" required>
+        
+        <div class="password-wrapper">
+            <input type="password" id="login-pass" placeholder="Password" required>
+            <button type="button" class="toggle-password" onclick="togglePassword('login-pass', this)" title="Tampilkan/Sembunyikan Password">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </div>
+
         <button id="btn-login" onclick="kirimAuth('login')">Masuk</button>
         <div id="login-msg" class="status-msg"></div>
         <span class="link-toggle" onclick="tampilkanForm('register')">Belum punya akun? Daftar di sini</span>
@@ -127,28 +180,47 @@
         <h2>Daftar Akun Baru</h2>
         <input type="text" id="reg-nama" placeholder="Nama Lengkap / Panggilan" required>
         <input type="text" id="reg-kontak" placeholder="Email atau No. WA" required>
-        <input type="password" id="reg-pass" placeholder="Buat Password" required>
+
+        <div class="password-wrapper">
+            <input type="password" id="reg-pass" placeholder="Buat Password" required>
+            <button type="button" class="toggle-password" onclick="togglePassword('reg-pass', this)" title="Tampilkan/Sembunyikan Password">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </div>
+
         <button id="btn-register" onclick="kirimAuth('register')">Daftar Sekarang</button>
         <div id="reg-msg" class="status-msg"></div>
         <span class="link-toggle" onclick="tampilkanForm('login')">Sudah punya akun? Login di sini</span>
     </div>
 
-   <!-- HALAMAN PEMUTAR MUROTAL -->
+    <!-- HALAMAN PEMUTAR MUROTAL -->
     <div id="player-box" class="card hidden">
         <h2>SELAMAT DATANG DI WEBSITE MOCH. ALI MASKUR, S.PD.I.</h2>
         <h2>Murotal Al-Qur'an</h2>
-         <h3>oleh : Syekh Mishary Rashid Alafasy</h3>
+        <h3 id="nama-qari">oleh : Syekh Mishary Rashid Alafasy</h3>
         <p id="welcome-text" style="color: #94a3b8; font-size: 14px;"></p>
 
         <div style="background: #0f172a; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <!-- Dropdown untuk memilih surah secara manual -->
-            <select id="pilih-surah" onchange="putarSurah(Number(this.value), true)" style="width: 100%; padding: 10px; margin-bottom: 12px; border-radius: 6px; background: #1e293b; color: white; border: 1px solid #334155;">
+            <!-- Dropdown Pilihan Qari -->
+            <label for="pilih-qari" class="select-label">Pilih Qari (Suara):</label>
+            <select id="pilih-qari" onchange="gantiQari(this.value)" style="margin-top: 0; margin-bottom: 10px; background: #1e293b; border: 1px solid #334155;">
+                <option value="mishary">Syekh Mishary Rashid Alafasy</option>
+                <option value="sudais">Syekh Abdurrahman As-Sudais</option>
+                <option value="maher">Syekh Maher Al-Muaiqly</option>
+            </select>
+
+            <!-- Dropdown Pilihan Surah -->
+            <label for="pilih-surah" class="select-label">Pilih Surah:</label>
+            <select id="pilih-surah" onchange="putarSurah(Number(this.value), true)" style="margin-top: 0; margin-bottom: 12px; background: #1e293b; border: 1px solid #334155;">
             </select>
 
             <!-- Judul surah yang sedang diputar -->
-            <p id="judul-surah" style="margin-top: 0; color: #34d399;"><strong>001. Surah Al-Fatihah</strong></p>
+            <p id="judul-surah" style="margin-top: 4px; color: #34d399;"><strong>001. Surah Al-Fatihah</strong></p>
 
-            <!-- Pemutar Audio (Langsung menggunakan src pada tag audio) -->
+            <!-- Pemutar Audio -->
             <audio id="audio-player" controls preload="none" src="https://server8.mp3quran.net/afs/001.mp3" style="width: 100%;">
                 Browser Anda tidak mendukung pemutar audio.
             </audio>
@@ -167,6 +239,22 @@
         // GANTI URL DI BAWAH INI DENGAN WEB APP URL GOOGLE APPS SCRIPT ANDA
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx7p_-bqFEJnT7XzoDCxCFJYDNPVqBa-8q7MJnko7vUPNAJkUd_HcIwJxCxiyW3Xgk8qg/exec";
 
+        // Konfigurasi 3 Qari (Server resmi mp3quran.net)
+        const daftarQari = {
+            mishary: {
+                nama: "Syekh Mishary Rashid Alafasy",
+                baseUrl: "https://server8.mp3quran.net/afs/"
+            },
+            sudais: {
+                nama: "Syekh Abdurrahman As-Sudais",
+                baseUrl: "https://server11.mp3quran.net/sds/"
+            },
+            maher: {
+                nama: "Syekh Maher Al-Muaiqly",
+                baseUrl: "https://server12.mp3quran.net/maher/"
+            }
+        };
+
         const daftarSurah = [
             "Al-Fatihah", "Al-Baqarah", "Ali 'Imran", "An-Nisa'", "Al-Ma'idah", "Al-An'am", "Al-A'raf", "Al-Anfal", "At-Taubah", "Yunus",
             "Hud", "Yusuf", "Ar-Ra'd", "Ibrahim", "Al-Hijr", "An-Nahl", "Al-Isra'", "Al-Kahf", "Maryam", "Taha",
@@ -183,9 +271,29 @@
         ];
 
         let surahAktif = 1;
+        let qariAktif = "mishary";
+
         const audioPlayer = document.getElementById("audio-player");
         const judulSurah = document.getElementById("judul-surah");
         const selectSurah = document.getElementById("pilih-surah");
+        const selectQari = document.getElementById("pilih-qari");
+        const namaQariEl = document.getElementById("nama-qari");
+
+        // Ikon SVG untuk tombol mata password
+        const iconMataTerbuka = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+        const iconMataTertutup = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+
+        // Fungsi Tampilkan / Sembunyikan Password
+        function togglePassword(inputId, btnElement) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                btnElement.innerHTML = iconMataTertutup;
+            } else {
+                input.type = "password";
+                btnElement.innerHTML = iconMataTerbuka;
+            }
+        }
 
         // 1. Isi dropdown 114 surah saat halaman dimuat
         function inisialisasiDropdown() {
@@ -200,7 +308,19 @@
             });
         }
 
-        // 2. Fungsi memutar surah & menyimpan progres terakhir
+        // 2. Fungsi mengganti Qari
+        function gantiQari(kodeQari) {
+            if (!daftarQari[kodeQari]) kodeQari = "mishary";
+            qariAktif = kodeQari;
+            localStorage.setItem("murotal_last_qari", kodeQari);
+            selectQari.value = kodeQari;
+            namaQariEl.innerText = "oleh : " + daftarQari[kodeQari].nama;
+
+            // Langsung putar surah yang sedang aktif dengan suara Qari baru
+            putarSurah(surahAktif, true);
+        }
+
+        // 3. Fungsi memutar surah & menyimpan progres terakhir
         function putarSurah(nomor, autoPlay = true) {
             if (nomor < 1) nomor = 114;
             if (nomor > 114) nomor = 1;
@@ -210,10 +330,11 @@
 
             const format3Digit = String(nomor).padStart(3, "0");
             const nama = daftarSurah[nomor - 1];
+            const qari = daftarQari[qariAktif] || daftarQari.mishary;
 
             judulSurah.innerHTML = `<strong>${format3Digit}. Surah ${nama}</strong>`;
             selectSurah.value = nomor;
-            audioPlayer.src = `https://server8.mp3quran.net/afs/${format3Digit}.mp3`;
+            audioPlayer.src = `${qari.baseUrl}${format3Digit}.mp3`;
             audioPlayer.load();
 
             if (autoPlay) {
@@ -231,14 +352,19 @@
             putarSurah(surahAktif - 1, true);
         }
 
-        // 3. Otomatis lanjut ke surah berikutnya saat surah selesai diputar
+        // 4. Otomatis lanjut ke surah berikutnya saat surah selesai diputar
         audioPlayer.addEventListener("ended", function() {
             surahBerikutnya();
         });
 
-        // 4. Cek sesi login & surah terakhir saat halaman dibuka
+        // 5. Cek sesi login, Qari terakhir, & surah terakhir saat halaman dibuka
         window.addEventListener("DOMContentLoaded", function() {
             inisialisasiDropdown();
+
+            const lastQari = localStorage.getItem("murotal_last_qari") || "mishary";
+            qariAktif = daftarQari[lastQari] ? lastQari : "mishary";
+            selectQari.value = qariAktif;
+            namaQariEl.innerText = "oleh : " + daftarQari[qariAktif].nama;
 
             const lastSurah = Number(localStorage.getItem("murotal_last_surah")) || 1;
             putarSurah(lastSurah, false); // Muat surah terakhir tanpa auto-play paksa
@@ -250,7 +376,7 @@
             }
         });
 
-        // 5. Navigasi Form Login & Register
+        // 6. Navigasi Form Login & Register
         function tampilkanForm(tipe) {
             document.getElementById("login-msg").innerText = "";
             document.getElementById("reg-msg").innerText = "";
@@ -263,7 +389,7 @@
             }
         }
 
-        // 6. Kirim data Login / Register ke Google Apps Script
+        // 7. Kirim data Login / Register ke Google Apps Script
         async function kirimAuth(action) {
             let payload = { action: action };
             let btn, msgBox;
