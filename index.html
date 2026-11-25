@@ -17,7 +17,6 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            /* Background Masjid Nabawi Full Screen + Lapisan Gelap agar Kontras */
             background-color: #0f172a;
             background-image: 
                 linear-gradient(rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.85)),
@@ -29,7 +28,6 @@
         }
 
         .card {
-            /* Efek Glassmorphism (Transparan Buram) agar Masjid Nabawi tetap terlihat */
             background: rgba(30, 41, 59, 0.78);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -59,7 +57,6 @@
             border-color: #10b981;
         }
 
-        /* Wadah input password agar ikon mata rapi di dalam kotak */
         .password-wrapper {
             position: relative;
             width: 100%;
@@ -68,7 +65,7 @@
 
         .password-wrapper input {
             margin: 0;
-            padding-right: 44px; /* Ruang untuk ikon mata */
+            padding-right: 44px;
         }
 
         .toggle-password {
@@ -171,8 +168,7 @@
         </div>
 
         <button id="btn-login" onclick="kirimAuth('login')">Masuk</button>
-        <br>
-        <br>
+        <br><br>
         <span style="color: #34d399">NB : No. Wa. awali angka 62</span>
         <div id="login-msg" class="status-msg"></div>
         <span class="link-toggle" onclick="tampilkanForm('register')">Belum punya akun? Daftar di sini</span>
@@ -197,14 +193,13 @@
         <button id="btn-register" onclick="kirimAuth('register')">Daftar Sekarang</button>
         <div id="reg-msg" class="status-msg"></div>
         <span class="link-toggle" onclick="tampilkanForm('login')">Sudah punya akun? Login di sini</span>
-              
     </div>
 
     <!-- HALAMAN PEMUTAR MUROTAL -->
     <div id="player-box" class="card hidden">
         <h2>SELAMAT DATANG DI WEBSITE Mochammad Ali Maskur Al Nganju'i</h2>
         <h2>Murotal Al-Qur'an</h2>
-       <p id="welcome-text" style="color: #94a3b8; font-size: 14px;"></p>
+        <p id="welcome-text" style="color: #94a3b8; font-size: 14px;"></p>
 
         <div style="background: #0f172a; padding: 15px; border-radius: 8px; margin: 20px 0;">
             <!-- Dropdown Pilihan Qari -->
@@ -213,7 +208,7 @@
                 <option value="mishary">Syekh Mishary Rashid Alafasy</option>
                 <option value="sudais">Syekh Abdurrahman As-Sudais</option>
                 <option value="maher">Syekh Maher Al-Muaiqly</option>
-                <option value="thaha">Muhammad Thaha Al Junayd</option>
+                <option value="thaha">Muhammad Thaha Al Junayd (Surah Pilihan)</option>
             </select>
 
             <!-- Dropdown Pilihan Surah -->
@@ -221,13 +216,17 @@
             <select id="pilih-surah" onchange="putarSurah(Number(this.value), true)" style="margin-top: 0; margin-bottom: 12px; background: #1e293b; border: 1px solid #334155;">
             </select>
 
-            <!-- Judul surah yang sedang diputar -->
-            <p id="judul-surah" style="margin-top: 4px; color: #34d399;"><strong>001. Surah Al-Fatihah</strong></p>
+            <!-- Judul surah & nama Qari yang sedang diputar -->
+            <p id="judul-surah" style="margin: 4px 0; color: #34d399;"><strong>001. Surah Al-Fatihah</strong></p>
+            <p id="nama-qari" style="margin: 0 0 10px 0; font-size: 13px; color: #94a3b8;">oleh : Syekh Mishary Rashid Alafasy</p>
 
             <audio id="audio-player" controls preload="none" style="width: 100%;">
-              <source src="https://server8.mp3quran.net/afs/001.mp3" type="audio/mpeg">
-                  Browser Anda tidak mendukung pemutar audio.
+                <source src="https://server8.mp3quran.net/afs/001.mp3" type="audio/mpeg">
+                Browser Anda tidak mendukung pemutar audio.
             </audio>
+
+            <!-- Pesan jika audio surah tidak tersedia -->
+            <p id="audio-status" style="font-size: 12px; color: #f87171; margin: 6px 0 0 0; min-height: 16px;"></p>
 
             <!-- Tombol Navigasi Manual -->
             <div style="display: flex; gap: 10px; margin-top: 12px;">
@@ -237,14 +236,12 @@
         </div>
 
         <button type="button" onclick="prosesLogout()" style="background: #ef4444;">Logout</button>
-       
     </div>
 
     <script>
-        // GANTI URL DI BAWAH INI DENGAN WEB APP URL GOOGLE APPS SCRIPT ANDA
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx7p_-bqFEJnT7XzoDCxCFJYDNPVqBa-8q7MJnko7vUPNAJkUd_HcIwJxCxiyW3Xgk8qg/exec";
 
-        // Konfigurasi 3 Qari (Server resmi mp3quran.net)
+        // Konfigurasi Qari
         const daftarQari = {
             mishary: {
                 nama: "Syekh Mishary Rashid Alafasy",
@@ -260,7 +257,8 @@
             },
             thaha: {
                 nama: "Muhammad Thaha Al Junayd",
-                baseUrl: "https://server12.mp3quran.net/thaha/"
+                // Catatan: Rekaman Muhammad Thaha Al Junayd umumnya hanya tersedia untuk Juz 30 & beberapa surah pilihan
+                baseUrl: "https://download.quranicaudio.com/quran/taha_al_junayd/"
             }
         };
 
@@ -287,12 +285,11 @@
         const selectSurah = document.getElementById("pilih-surah");
         const selectQari = document.getElementById("pilih-qari");
         const namaQariEl = document.getElementById("nama-qari");
+        const audioStatusEl = document.getElementById("audio-status");
 
-        // Ikon SVG untuk tombol mata password
         const iconMataTerbuka = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
         const iconMataTertutup = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
 
-        // Fungsi Tampilkan / Sembunyikan Password
         function togglePassword(inputId, btnElement) {
             const input = document.getElementById(inputId);
             if (input.type === "password") {
@@ -304,7 +301,6 @@
             }
         }
 
-        // 1. Isi dropdown 114 surah saat halaman dimuat
         function inisialisasiDropdown() {
             selectSurah.innerHTML = "";
             daftarSurah.forEach((nama, index) => {
@@ -317,19 +313,19 @@
             });
         }
 
-        // 2. Fungsi mengganti Qari
         function gantiQari(kodeQari) {
             if (!daftarQari[kodeQari]) kodeQari = "mishary";
             qariAktif = kodeQari;
             localStorage.setItem("murotal_last_qari", kodeQari);
             selectQari.value = kodeQari;
-            namaQariEl.innerText = "oleh : " + daftarQari[kodeQari].nama;
 
-            // Langsung putar surah yang sedang aktif dengan suara Qari baru
+            if (namaQariEl) {
+                namaQariEl.innerText = "oleh : " + daftarQari[kodeQari].nama;
+            }
+
             putarSurah(surahAktif, true);
         }
 
-        // 3. Fungsi memutar surah & menyimpan progres terakhir
         function putarSurah(nomor, autoPlay = true) {
             if (nomor < 1) nomor = 114;
             if (nomor > 114) nomor = 1;
@@ -343,6 +339,8 @@
 
             judulSurah.innerHTML = `<strong>${format3Digit}. Surah ${nama}</strong>`;
             selectSurah.value = nomor;
+            if (audioStatusEl) audioStatusEl.innerText = "";
+
             audioPlayer.src = `${qari.baseUrl}${format3Digit}.mp3`;
             audioPlayer.load();
 
@@ -353,6 +351,13 @@
             }
         }
 
+        // Tampilkan pesan jika file audio tidak ditemukan di server
+        audioPlayer.addEventListener("error", function() {
+            if (audioStatusEl) {
+                audioStatusEl.innerText = "Maaf, audio surah ini belum tersedia untuk Qari yang dipilih.";
+            }
+        });
+
         function surahBerikutnya() {
             putarSurah(surahAktif + 1, true);
         }
@@ -361,22 +366,23 @@
             putarSurah(surahAktif - 1, true);
         }
 
-        // 4. Otomatis lanjut ke surah berikutnya saat surah selesai diputar
         audioPlayer.addEventListener("ended", function() {
             surahBerikutnya();
         });
 
-        // 5. Cek sesi login, Qari terakhir, & surah terakhir saat halaman dibuka
         window.addEventListener("DOMContentLoaded", function() {
             inisialisasiDropdown();
 
             const lastQari = localStorage.getItem("murotal_last_qari") || "mishary";
             qariAktif = daftarQari[lastQari] ? lastQari : "mishary";
             selectQari.value = qariAktif;
-            namaQariEl.innerText = "oleh : " + daftarQari[qariAktif].nama;
+
+            if (namaQariEl) {
+                namaQariEl.innerText = "oleh : " + daftarQari[qariAktif].nama;
+            }
 
             const lastSurah = Number(localStorage.getItem("murotal_last_surah")) || 1;
-            putarSurah(lastSurah, false); // Muat surah terakhir tanpa auto-play paksa
+            putarSurah(lastSurah, false);
 
             const savedUser = localStorage.getItem("murotal_session");
             if (savedUser) {
@@ -385,7 +391,6 @@
             }
         });
 
-        // 6. Navigasi Form Login & Register
         function tampilkanForm(tipe) {
             document.getElementById("login-msg").innerText = "";
             document.getElementById("reg-msg").innerText = "";
@@ -398,7 +403,6 @@
             }
         }
 
-        // 7. Kirim data Login / Register ke Google Apps Script
         async function kirimAuth(action) {
             let payload = { action: action };
             let btn, msgBox;
