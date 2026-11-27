@@ -208,7 +208,7 @@
                 <option value="mishary">Syekh Mishary Rashid Alafasy</option>
                 <option value="sudais">Syekh Abdurrahman As-Sudais</option>
                 <option value="maher">Syekh Maher Al-Muaiqly</option>
-                <option value="thaha">Muhammad Thaha Al Junayd (Surah Pilihan)</option>
+                <option value="shur">Saud As Shuraim</option>
             </select>
 
             <!-- Dropdown Pilihan Surah -->
@@ -258,7 +258,7 @@
             thaha: {
                 nama: "Muhammad Thaha Al Junayd",
                 // Catatan: Rekaman Muhammad Thaha Al Junayd umumnya hanya tersedia untuk Juz 30 & beberapa surah pilihan
-                baseUrl: "https://download.quranicaudio.com/quran/taha_al_junayd/"
+                baseUrl: "https://server12.mp3quran.net/shur/"
             }
         };
 
@@ -465,7 +465,7 @@
             document.getElementById("login-box").classList.add("hidden");
             document.getElementById("register-box").classList.add("hidden");
             document.getElementById("player-box").classList.remove("hidden");
-            document.getElementById("welcome-text").innerText = "Ahlan wa Sahlan, " + user.nama + " (" + user.kontak + ")";
+            document.getElementById("welcome-text").innerText = "Selamat datang semoga Alloh SWT meridhoi kita semua, Aamiin..., " + user.nama + " (" + user.kontak + ")";
         }
 
         function prosesLogout() {
