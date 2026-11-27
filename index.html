@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Murotal Al-Qur'an Digital</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: system-ui, sans-serif;
             color: #f8fafc;
             text-align: center;
-            padding: 20px;
+            padding: 95px 20px 20px 20px;
             margin: 0;
             min-height: 100vh;
             box-sizing: border-box;
@@ -25,6 +26,100 @@
             background-position: center;
             background-attachment: fixed;
             background-repeat: no-repeat;
+        }
+
+        /* === KALIGRAFI LINGKARAN BERPUTAR 3 GARIS === */
+        .kaligrafi-badge {
+            position: fixed;
+            top: 16px;
+            width: 82px;
+            height: 82px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(15, 23, 42, 0.85) 55%, rgba(16, 185, 129, 0.15) 100%);
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.25);
+        }
+
+        .kaligrafi-kanan {
+            right: 16px;
+        }
+
+        .kaligrafi-kiri {
+            left: 16px;
+        }
+
+        .kaligrafi-teks {
+            font-family: 'Amiri', 'Traditional Arabic', serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: #fde68a;
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.8), 0 0 18px rgba(16, 185, 129, 0.5);
+            z-index: 2;
+            line-height: 1;
+            user-select: none;
+        }
+
+        .ring {
+            position: absolute;
+            border-radius: 50%;
+            border-style: solid;
+            box-sizing: border-box;
+        }
+
+        /* Garis 1 (Luar) - Searah jarum jam */
+        .ring-1 {
+            inset: 0;
+            border-width: 2.5px;
+            border-color: #fbbf24 transparent #10b981 transparent;
+            animation: putar-kanan 6s linear infinite;
+            filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.6));
+        }
+
+        /* Garis 2 (Tengah) - Berlawanan jarum jam */
+        .ring-2 {
+            inset: 6px;
+            border-width: 2.5px;
+            border-color: transparent #38bdf8 transparent #f472b6;
+            animation: putar-kiri 4.5s linear infinite;
+            filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.6));
+        }
+
+        /* Garis 3 (Dalam) - Searah jarum jam */
+        .ring-3 {
+            inset: 12px;
+            border-width: 2px;
+            border-color: #34d399 transparent #fde68a transparent;
+            animation: putar-kanan 3s linear infinite;
+            filter: drop-shadow(0 0 4px rgba(52, 211, 153, 0.6));
+        }
+
+        @keyframes putar-kanan {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes putar-kiri {
+            from { transform: rotate(360deg); }
+            to { transform: rotate(0deg); }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding-top: 85px;
+            }
+            .kaligrafi-badge {
+                width: 68px;
+                height: 68px;
+                top: 12px;
+            }
+            .kaligrafi-kanan { right: 12px; }
+            .kaligrafi-kiri { left: 12px; }
+            .kaligrafi-teks { font-size: 21px; }
+            .ring-2 { inset: 5px; }
+            .ring-3 { inset: 10px; }
         }
 
         .card {
@@ -149,6 +244,14 @@
             margin-top: 8px;
         }
 
+        .gdrive-frame {
+            width: 100%;
+            height: 80px;
+            border: none;
+            border-radius: 8px;
+            background: #1e293b;
+        }
+
         .credit-footer {
             margin-top: 14px;
             color: #34d399;
@@ -169,6 +272,22 @@
     </style>
 </head>
 <body>
+
+    <!-- KALIGRAFI KIRI ATAS: MUHAMMAD -->
+    <div class="kaligrafi-badge kaligrafi-kiri" title="Muhammad SAW">
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-3"></div>
+        <span class="kaligrafi-teks">مُحَمَّد</span>
+    </div>
+
+    <!-- KALIGRAFI KANAN ATAS: ALLAH -->
+    <div class="kaligrafi-badge kaligrafi-kanan" title="Alloh SWT">
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-3"></div>
+        <span class="kaligrafi-teks">الله</span>
+    </div>
 
     <!-- FORM LOGIN -->
     <div id="login-box" class="card">
@@ -227,27 +346,34 @@
                 <option value="sudais">Syekh Abdurrahman As-Sudais</option>
                 <option value="maher">Syekh Maher Al-Muaiqly</option>
                 <option value="shur">Syekh Saud As-Shuraim</option>
+                <option value="gus_muqorrobin">Gus Muqorrobin (Murotal Pilihan)</option>
             </select>
 
             <!-- Dropdown Pilihan Surah -->
-            <label for="pilih-surah" class="select-label">Pilih Surah:</label>
-            <select id="pilih-surah" onchange="putarSurah(Number(this.value), true)" style="margin-top: 0; margin-bottom: 12px; background: #1e293b; border: 1px solid #334155;">
-            </select>
+            <div id="surah-controls">
+                <label for="pilih-surah" class="select-label">Pilih Surah:</label>
+                <select id="pilih-surah" onchange="putarSurah(Number(this.value), true)" style="margin-top: 0; margin-bottom: 12px; background: #1e293b; border: 1px solid #334155;">
+                </select>
+            </div>
 
             <!-- Judul surah & nama Qari yang sedang diputar -->
             <p id="judul-surah" style="margin: 4px 0; color: #34d399;"><strong>001. Surah Al-Fatihah</strong></p>
             <p id="nama-qari" style="margin: 0 0 10px 0; font-size: 13px; color: #94a3b8;">oleh : Syekh Mishary Rashid Alafasy</p>
 
+            <!-- Pemutar Audio Standar -->
             <audio id="audio-player" controls preload="none" style="width: 100%;">
                 <source src="https://server8.mp3quran.net/afs/001.mp3" type="audio/mpeg">
                 Browser Anda tidak mendukung pemutar audio.
             </audio>
 
-            <!-- Pesan jika audio surah tidak tersedia -->
+            <!-- Pemutar Cadangan Google Drive -->
+            <iframe id="gdrive-player" class="gdrive-frame hidden" allow="autoplay"></iframe>
+
+            <!-- Pesan status audio -->
             <p id="audio-status" style="font-size: 12px; color: #f87171; margin: 6px 0 0 0; min-height: 16px;"></p>
 
             <!-- Tombol Navigasi Manual -->
-            <div style="display: flex; gap: 10px; margin-top: 12px;">
+            <div id="nav-surah" style="display: flex; gap: 10px; margin-top: 12px;">
                 <button type="button" onclick="surahSebelumnya()" style="background: #334155; margin-top: 0;">&#9664; Sebelum</button>
                 <button type="button" onclick="surahBerikutnya()" style="background: #334155; margin-top: 0;">Sesudah &#9654;</button>                
             </div>
@@ -264,23 +390,36 @@
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx7p_-bqFEJnT7XzoDCxCFJYDNPVqBa-8q7MJnko7vUPNAJkUd_HcIwJxCxiyW3Xgk8qg/exec";
 
-        // Konfigurasi Qari (key sudah disesuaikan dengan value dropdown & server MP3 resmi)
         const daftarQari = {
             mishary: {
+                tipe: "surah",
                 nama: "Syekh Mishary Rashid Alafasy",
                 baseUrl: "https://server8.mp3quran.net/afs/"
             },
             sudais: {
+                tipe: "surah",
                 nama: "Syekh Abdurrahman As-Sudais",
                 baseUrl: "https://server11.mp3quran.net/sds/"
             },
             maher: {
+                tipe: "surah",
                 nama: "Syekh Maher Al-Muaiqly",
                 baseUrl: "https://server12.mp3quran.net/maher/"
             },
             shur: {
+                tipe: "surah",
                 nama: "Syekh Saud As-Shuraim",
                 baseUrl: "https://server7.mp3quran.net/shur/"
+            },
+            gus_muqorrobin: {
+                tipe: "gdrive",
+                nama: "Gus Muqorrobin",
+                judul: "18 Gus Muqorrobin",
+                directUrls: [
+                    "https://docs.google.com/uc?export=open&id=1_reJhKxUdlQg9uJ_H6gdw7KCECZpzFZi",
+                    "https://drive.usercontent.google.com/download?id=1_reJhKxUdlQg9uJ_H6gdw7KCECZpzFZi&export=download"
+                ],
+                embedUrl: "https://drive.google.com/file/d/1_reJhKxUdlQg9uJ_H6gdw7KCECZpzFZi/preview"
             }
         };
 
@@ -301,8 +440,12 @@
 
         let surahAktif = 1;
         let qariAktif = "mishary";
+        let gdriveFallbackIndex = 0;
 
         const audioPlayer = document.getElementById("audio-player");
+        const gdrivePlayer = document.getElementById("gdrive-player");
+        const surahControls = document.getElementById("surah-controls");
+        const navSurah = document.getElementById("nav-surah");
         const judulSurah = document.getElementById("judul-surah");
         const selectSurah = document.getElementById("pilih-surah");
         const selectQari = document.getElementById("pilih-qari");
@@ -335,17 +478,54 @@
             });
         }
 
+        function putarGdrive(qari, autoPlay = true) {
+            gdriveFallbackIndex = 0;
+            surahControls.classList.add("hidden");
+            navSurah.classList.add("hidden");
+
+            gdrivePlayer.src = "";
+            gdrivePlayer.classList.add("hidden");
+            audioPlayer.classList.remove("hidden");
+
+            judulSurah.innerHTML = `<strong>${qari.judul}</strong>`;
+            if (namaQariEl) namaQariEl.innerText = "oleh : " + qari.nama;
+            if (audioStatusEl) audioStatusEl.innerText = "";
+
+            audioPlayer.src = qari.directUrls[0];
+            audioPlayer.load();
+
+            if (autoPlay) {
+                audioPlayer.play().catch(err => {
+                    console.log("Menunggu interaksi pengguna:", err);
+                });
+            }
+        }
+
+        function tampilkanModeSurah() {
+            gdrivePlayer.src = "";
+            gdrivePlayer.classList.add("hidden");
+
+            audioPlayer.classList.remove("hidden");
+            surahControls.classList.remove("hidden");
+            navSurah.classList.remove("hidden");
+        }
+
         function gantiQari(kodeQari) {
             if (!daftarQari[kodeQari]) kodeQari = "mishary";
             qariAktif = kodeQari;
             localStorage.setItem("murotal_last_qari", kodeQari);
             selectQari.value = kodeQari;
 
-            if (namaQariEl) {
-                namaQariEl.innerText = "oleh : " + daftarQari[kodeQari].nama;
+            const qari = daftarQari[kodeQari];
+            if (qari.tipe === "gdrive") {
+                putarGdrive(qari, true);
+            } else {
+                tampilkanModeSurah();
+                if (namaQariEl) {
+                    namaQariEl.innerText = "oleh : " + qari.nama;
+                }
+                putarSurah(surahAktif, true);
             }
-
-            putarSurah(surahAktif, true);
         }
 
         function putarSurah(nomor, autoPlay = true) {
@@ -358,6 +538,11 @@
             const format3Digit = String(nomor).padStart(3, "0");
             const nama = daftarSurah[nomor - 1];
             const qari = daftarQari[qariAktif] || daftarQari.mishary;
+
+            if (qari.tipe === "gdrive") {
+                putarGdrive(qari, autoPlay);
+                return;
+            }
 
             judulSurah.innerHTML = `<strong>${format3Digit}. Surah ${nama}</strong>`;
             selectSurah.value = nomor;
@@ -373,8 +558,25 @@
             }
         }
 
-        // Tampilkan pesan jika file audio tidak ditemukan di server
         audioPlayer.addEventListener("error", function() {
+            const qari = daftarQari[qariAktif];
+
+            if (qari && qari.tipe === "gdrive") {
+                gdriveFallbackIndex++;
+                if (gdriveFallbackIndex < qari.directUrls.length) {
+                    audioPlayer.src = qari.directUrls[gdriveFallbackIndex];
+                    audioPlayer.load();
+                    audioPlayer.play().catch(() => {});
+                } else {
+                    audioPlayer.pause();
+                    audioPlayer.classList.add("hidden");
+                    gdrivePlayer.src = qari.embedUrl;
+                    gdrivePlayer.classList.remove("hidden");
+                    if (audioStatusEl) audioStatusEl.innerText = "";
+                }
+                return;
+            }
+
             if (audioStatusEl) {
                 audioStatusEl.innerText = "satu huruf dibalas dengan sepuluh kebaikan";
             }
@@ -389,7 +591,10 @@
         }
 
         audioPlayer.addEventListener("ended", function() {
-            surahBerikutnya();
+            const qari = daftarQari[qariAktif];
+            if (qari && qari.tipe === "surah") {
+                surahBerikutnya();
+            }
         });
 
         window.addEventListener("DOMContentLoaded", function() {
@@ -399,12 +604,19 @@
             qariAktif = daftarQari[lastQari] ? lastQari : "mishary";
             selectQari.value = qariAktif;
 
-            if (namaQariEl) {
-                namaQariEl.innerText = "oleh : " + daftarQari[qariAktif].nama;
-            }
-
             const lastSurah = Number(localStorage.getItem("murotal_last_surah")) || 1;
-            putarSurah(lastSurah, false);
+            const qari = daftarQari[qariAktif];
+
+            if (qari.tipe === "gdrive") {
+                surahAktif = lastSurah;
+                putarGdrive(qari, false);
+            } else {
+                tampilkanModeSurah();
+                if (namaQariEl) {
+                    namaQariEl.innerText = "oleh : " + qari.nama;
+                }
+                putarSurah(lastSurah, false);
+            }
 
             const savedUser = localStorage.getItem("murotal_session");
             if (savedUser) {
@@ -492,6 +704,7 @@
 
         function prosesLogout() {
             audioPlayer.pause();
+            gdrivePlayer.src = "";
             localStorage.removeItem("murotal_session");
             location.reload();
         }
