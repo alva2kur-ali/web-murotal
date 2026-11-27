@@ -197,7 +197,7 @@
 
     <!-- HALAMAN PEMUTAR MUROTAL -->
     <div id="player-box" class="card hidden">
-        <h2>SELAMAT DATANG DI WEBSITE Mochammad Ali Maskur Al Nganju'i</h2>
+        <h2>SELAMAT DATANG</h2>
         <h2>Murotal Al-Qur'an</h2>
         <p id="welcome-text" style="color: #94a3b8; font-size: 14px;"></p>
 
@@ -233,11 +233,11 @@
                 <button type="button" onclick="surahSebelumnya()" style="background: #334155; margin-top: 0;">&#9664; Sebelum</button>
                 <button type="button" onclick="surahBerikutnya()" style="background: #334155; margin-top: 0;">Sesudah &#9654;</button>                
             </div>
-        </div>
-
+        
         <button type="button" onclick="prosesLogout()" style="background: #ef4444;">Logout</button>
-    </div>
-
+            
+        <input type="text" id="reg-kontak" placeholder="Email atau No. WA (awali angka 62)" required>
+        </div>
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx7p_-bqFEJnT7XzoDCxCFJYDNPVqBa-8q7MJnko7vUPNAJkUd_HcIwJxCxiyW3Xgk8qg/exec";
 
@@ -256,8 +256,7 @@
                 baseUrl: "https://server12.mp3quran.net/maher/"
             },
             thaha: {
-                nama: "Muhammad Thaha Al Junayd",
-                // Catatan: Rekaman Muhammad Thaha Al Junayd umumnya hanya tersedia untuk Juz 30 & beberapa surah pilihan
+                nama: "Syekh Saud As Shuraim",
                 baseUrl: "https://server12.mp3quran.net/shur/"
             }
         };
@@ -465,7 +464,7 @@
             document.getElementById("login-box").classList.add("hidden");
             document.getElementById("register-box").classList.add("hidden");
             document.getElementById("player-box").classList.remove("hidden");
-            document.getElementById("welcome-text").innerText = "Selamat datang semoga Alloh SWT meridhoi kita semua, Aamiin..., " + user.nama + " (" + user.kontak + ")";
+            document.getElementById("welcome-text").innerText = "Semoga Alloh SWT meridhoi kita semua, Aamiin... Ahlan Wasahlan, " + user.nama + " (" + user.kontak + ")";
         }
 
         function prosesLogout() {
