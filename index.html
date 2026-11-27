@@ -148,6 +148,24 @@
             margin-bottom: 4px;
             margin-top: 8px;
         }
+
+        .credit-footer {
+            margin-top: 14px;
+            color: #34d399;
+            line-height: 1.5;
+        }
+
+        .credit-footer .credit-nama {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .credit-footer .credit-alamat {
+            display: block;
+            font-size: 12px;
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
@@ -234,15 +252,19 @@
                 <button type="button" onclick="surahBerikutnya()" style="background: #334155; margin-top: 0;">Sesudah &#9654;</button>                
             </div>
         
-        <button type="button" onclick="prosesLogout()" style="background: #ef4444;">Logout</button>
-     </div> 
-        <span style="color: #34d399">By Mochammad Ali Maskur, S.Pd.I</span>
-        <span style="color: #34d399">dusun Sempayang Gondang Nganjuk Jatim</span>
+            <button type="button" onclick="prosesLogout()" style="background: #ef4444;">Logout</button>
+        </div>
+
+        <div class="credit-footer">
+            <span class="credit-nama">By Mochammad Ali Maskur, S.Pd.I</span>
+            <span class="credit-alamat">Dusun Sempayang, Gondang, Nganjuk, Jatim</span>
+        </div>
+    </div>
         
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx7p_-bqFEJnT7XzoDCxCFJYDNPVqBa-8q7MJnko7vUPNAJkUd_HcIwJxCxiyW3Xgk8qg/exec";
 
-        // Konfigurasi Qari
+        // Konfigurasi Qari (key sudah disesuaikan dengan value dropdown & server MP3 resmi)
         const daftarQari = {
             mishary: {
                 nama: "Syekh Mishary Rashid Alafasy",
@@ -256,9 +278,9 @@
                 nama: "Syekh Maher Al-Muaiqly",
                 baseUrl: "https://server12.mp3quran.net/maher/"
             },
-            thaha: {
+            shur: {
                 nama: "Syekh Saud As-Shuraim",
-                baseUrl: "https://www.mp3quran.net/id/shur/"
+                baseUrl: "https://server7.mp3quran.net/shur/"
             }
         };
 
